@@ -5,7 +5,6 @@ namespace _Checker_basic {
 typedef pair<ptrdiff_t, ptrdiff_t> pii;
 typedef long long i64;
 
-constexpr size_t BITSET_SIZE = 32;
 constexpr size_t ARRAY_OFFSET = 5;
 constexpr char operators[4] = {'U', 'D', 'L', 'R'};
 constexpr pii diff[4] = {make_pair(0, 1), make_pair(0, -1), make_pair(-1, 0), make_pair(1, 0)};
@@ -27,9 +26,9 @@ size_t getID_from_operators(char op) {
 using namespace _Checker_basic;
 
 namespace _Config {
-#define __STAT_DETAIL__ 0b10001
+#define __STAT_DETAIL__
 #define __REC_TIME__
-// #define __PRINT_HACK_DATA__
+#define __PRINT_HACK_DATA__
 
 constexpr size_t MAP_MAX = 20;
 constexpr size_t SEQ_MAX = 6e4;
@@ -66,7 +65,7 @@ char operator_sequence[SEQ_MAX + ARRAY_OFFSET];
 
 uniform_int_distribution<size_t> u(0, 3);
 void generate_operator_sequence(size_t seed, size_t len) {
-#define _(RANDOM_ENGINE_TYPE)                                                      \
+#define _RANDOM(RANDOM_ENGINE_TYPE)                                                \
     {                                                                              \
         RANDOM_ENGINE_TYPE engine(seed);                                           \
         for (int i = 0; i < len; ++i) operator_sequence[i] = operators[u(engine)]; \
@@ -74,15 +73,17 @@ void generate_operator_sequence(size_t seed, size_t len) {
 
     switch (seed % 3) {
         case 0:
-            _(minstd_rand)
+            _RANDOM(minstd_rand)
             break;
         case 1:
-            _(mt19937)
+            _RANDOM(mt19937)
             break;
         default:
-            _(ranlux24)
+            _RANDOM(ranlux24)
             break;
     }
+    // or simply
+    // _RANDOM(default_random_engine)
 #undef _
 }
 
@@ -237,40 +238,18 @@ void main(size_t data_len = DATA_NUM) {
 #ifdef __STAT_DETAIL__
     cout << "---" << endl;
     cout << "Details:" << endl;
-    bitset<BITSET_SIZE> bs(__STAT_DETAIL__);
 
-    if (bs[0]) {
-        size_t _max = 0, _min = -1;
-        for (size_t i = 0; i < data_len; ++i) _max = max(_max, steps[i]);
-        for (size_t i = 0; i < data_len; ++i) _min = min(_min, steps[i]);
-        cout << "- Max: " << _max << endl;
-        cout << "- Min: " << _min << endl;
-    }
+    size_t _max = 0, _min = -1;
+    for (size_t i = 0; i < data_len; ++i) _max = max(_max, steps[i]);
+    for (size_t i = 0; i < data_len; ++i) _min = min(_min, steps[i]);
+    cout << "- Max: " << _max << endl;
+    cout << "- Min: " << _min << endl;
 
-    if (bs[1]) {
-        i64 sum = 0;
-        for (size_t i = 0; i < data_len; ++i) sum += steps[i];
-        cout << "- Sum: " << sum << endl;
+    cout << "- All results:" << endl
+         << endl
+         << "  ";
+    for (size_t i = 0; i < data_len; ++i) cout << steps[i] << (i == data_len - 1 ? "\n" : ", ");
 
-        if (bs[2]) {
-            double ave = sum * 1.0 / data_len;
-            cout << "- Average: " << ave << endl;
-
-            if (bs[3]) {
-                double var = 0;
-                for (size_t i = 0; i < data_len; ++i) var += abs(steps[i] - ave);
-                var /= data_len;
-                cout << "- Variance: " << var << endl;
-            }
-        }
-    }
-
-    if (bs[4]) {
-        cout << "- All results:" << endl
-             << endl
-             << "  ";
-        for (size_t i = 0; i < data_len; ++i) cout << steps[i] << (i == data_len - 1 ? "\n" : ", ");
-    }
     cout << "---" << endl;
 #endif
 }
