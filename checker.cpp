@@ -269,8 +269,8 @@ int main() {
     _Statistics::main();
 
 #ifdef __REC_TIME__
-    std::cerr << "\n---\n"
-              << "Time used: " << clock() - _CLOCK_ST << std::endl;
+    cerr << "\n---\n"
+         << "Time used: " << clock() - _CLOCK_ST << endl;
 #endif
     return 0;
 }
