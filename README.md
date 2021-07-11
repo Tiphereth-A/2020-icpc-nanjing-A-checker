@@ -1,6 +1,6 @@
 # 2020-icpc-nanjing-A-checker
 
-[2020ICPC南京区域赛A题](https://ac.nowcoder.com/acm/contest/10272/A) 的checker
+[2020ICPC南京区域赛A题](https://codeforces.com/gym/102992/problem/A) 的checker
 
 ## 如何使用
 
